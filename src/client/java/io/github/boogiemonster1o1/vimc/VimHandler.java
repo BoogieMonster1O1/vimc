@@ -1,5 +1,6 @@
 package io.github.boogiemonster1o1.vimc;
 
+import net.minecraft.block.entity.SignText;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -19,8 +20,9 @@ public class VimHandler implements Drawable, Widget, Element {
     private int y;
     private boolean isEditing = false;
     public VimMode mode = VimMode.COMMAND;
-    private String command = null;
+    String command = null;
     private int position = 0;
+    SignText saved = null;
 
     public VimHandler(int height, int width, int x, int y) {
         this.height = height;
@@ -31,6 +33,7 @@ public class VimHandler implements Drawable, Widget, Element {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        context.getMatrices().translate(0, 0, 100);
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         context.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, 0xFF000000);
         int color = isErrorCommand() ? 0xFFFF0000 : 0xFF000000;
@@ -45,6 +48,10 @@ public class VimHandler implements Drawable, Widget, Element {
             case REPLACE -> context.drawTextWithShadow(textRenderer, "-- REPLACE --", this.getX() + 3, this.getY() + 3, 0xFFFFFFFF);
             case COMMAND, EXECUTE -> context.drawTextWithShadow(textRenderer, this.command, this.getX() + 3, this.getY() + 3, 0xFFFFFFFF);
         }
+    }
+
+    public void save(SignText newText) {
+        this.saved = newText;
     }
 
     public boolean isErrorCommand() {

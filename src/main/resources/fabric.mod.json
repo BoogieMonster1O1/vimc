@@ -34,5 +34,10 @@
 	},
 	"suggests": {
 		"flamingo": "*"
+	},
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/class_7743": ["io/github/boogiemonster1o1/vimc/SignEditAccess"]
+		}
 	}
 }

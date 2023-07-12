@@ -28,16 +28,31 @@ import java.util.stream.IntStream;
 
 @Mixin(AbstractSignEditScreen.class)
 public abstract class AbstractSignEditScreenMixin extends Screen implements SignEditAccess {
-	@Shadow @Final private SignBlockEntity blockEntity;
-	@Shadow @Final private boolean front;
-	@Shadow @Final private String[] messages;
-	@Shadow protected abstract void finishEditing();
-	@Shadow private SignText text;
-	@Shadow private int currentRow;
-	@Shadow private SelectionManager selectionManager;
-	@Unique private VimHandler handler;
-	@Unique public int lastKeyPress = 0;
-	@Unique public int cursorAt = 0;
+	@Shadow
+	@Final
+	private SignBlockEntity blockEntity;
+	@Shadow
+	@Final
+	private boolean front;
+	@Shadow
+	@Final
+	private String[] messages;
+
+	@Shadow
+	protected abstract void finishEditing();
+
+	@Shadow
+	private SignText text;
+	@Shadow
+	private int currentRow;
+	@Shadow
+	private SelectionManager selectionManager;
+	@Unique
+	private VimHandler handler;
+	@Unique
+	public int lastKeyPress = 0;
+	@Unique
+	public int cursorAt = 0;
 
 	protected AbstractSignEditScreenMixin(Text title) {
 		super(title);
@@ -86,7 +101,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements Sign
 		this.text = text;
 		Text[] texts = this.text.getMessages(false);
 		String[] messages = IntStream.range(0, 4).mapToObj(i -> texts[i].getString()).toArray(String[]::new);
-		System.arraycopy(messages,0, this.messages, 0, 4);
+		System.arraycopy(messages, 0, this.messages, 0, 4);
 	}
 
 	@Override
@@ -135,7 +150,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements Sign
 		if (handler.mode == VimMode.EXECUTE) {
 			switch (keyCode) {
 				case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
-				        this.handler.execute((AbstractSignEditScreen) (Object) this);
+					this.handler.execute((AbstractSignEditScreen) (Object) this);
 					cir.setReturnValue(true);
 					return;
 				}
@@ -195,7 +210,6 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements Sign
 		}
 		if (handler.mode == VimMode.COMMAND) {
 			cir.setReturnValue(true);
-			return;
 		}
 	}
 
@@ -205,7 +219,8 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements Sign
 			handler.appendCommand(chr);
 			cir.setReturnValue(true);
 			return;
-		} if (handler.mode == VimMode.COMMAND) {
+		}
+		if (handler.mode == VimMode.COMMAND) {
 			if (chr == ':') {
 				handler.enterExecuteMode();
 				cir.setReturnValue(true);
@@ -230,7 +245,6 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements Sign
 				return;
 			}
 			cir.setReturnValue(true);
-			return;
 		}
 	}
 

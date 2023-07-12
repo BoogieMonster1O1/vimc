@@ -1,0 +1,10 @@
+# Top-most EditorConfig file
+root = true
+
+[*.java]
+indent_style = tab
+indent_size = tab
+
+[*.json]
+indent_style = space
+indent_size = 2

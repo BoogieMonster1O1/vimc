@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -116,7 +117,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements Sign
 		this.selectionManager.setSelection(maxCursorPos, maxCursorPos);
 	}
 
-	@Inject(method = "renderSignText", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;IIIZ)I", ordinal = 0))
+	@Inject(method = "renderSignText", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;IIIZ)I", shift = At.Shift.BEFORE, ordinal = 0))
 	public void renderCursor(DrawContext context, CallbackInfo ci) {
 		if (this.handler.mode != VimMode.EXECUTE) {
 			String text = Optional.ofNullable(this.messages[this.currentRow]).orElse("");
@@ -127,7 +128,6 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements Sign
 			int fillWidth = maxCursorPos == text.length() ? 5 : this.textRenderer.getWidth(text.substring(maxCursorPos, maxCursorPos + 1));
 			int yStart = this.currentRow * height - 20;
 			context.getMatrices().push();
-			context.getMatrices().translate(0, 0, -1);
 			context.fill(xStart, yStart, xStart + fillWidth, yStart + height, 0xFFAAAAAA);
 			context.getMatrices().pop();
 		}
@@ -233,8 +233,20 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements Sign
 			}
 			if (chr == 'o') {
 				handler.enterInsertMode();
-				if (this.currentRow != 3 && Optional.ofNullable(this.messages[3]).map(String::isEmpty).orElse(true)) {
-					// TODO
+				if (this.currentRow != 3) {
+					if (Optional.ofNullable(this.messages[3]).map(String::isEmpty).orElse(true)) {
+						this.currentRow++;
+						for (int i = 3; i > this.currentRow; i--) {
+							this.messages[i] = this.messages[i - 1];
+						}
+						this.messages[this.currentRow] = "";
+						this.text = this.text.withMessage(0, Text.literal(this.messages[0]))
+							.withMessage(1, Text.literal(this.messages[1]))
+							.withMessage(2, Text.literal(this.messages[2]))
+							.withMessage(3, Text.literal(this.messages[3]));
+					} else {
+						this.currentRow++;
+					}
 				}
 				cir.setReturnValue(true);
 				return;

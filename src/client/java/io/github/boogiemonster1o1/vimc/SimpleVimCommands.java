@@ -29,9 +29,14 @@ public enum SimpleVimCommands implements VimCommand {
 	QUIT {
 		@Override
 		public void perform(AbstractSignEditScreen screen, boolean force) {
-
-			screen.vimc$setText(screen.vimc$getHandler().saved);
-			screen.vimc$quit();
+			VimHandler handler = screen.vimc$getHandler();
+			if (!force && screen.vimc$getText() != handler.saved) {
+				handler.enterCommandMode();
+				handler.command = "E37: No write since last change (add ! to override)";
+			} else {
+				screen.vimc$setText(screen.vimc$getHandler().saved);
+				screen.vimc$quit();
+			}
 		}
 	}
 }

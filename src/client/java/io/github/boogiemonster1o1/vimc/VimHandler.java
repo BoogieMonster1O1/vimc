@@ -63,7 +63,7 @@ public class VimHandler implements Drawable, Widget, Element {
 			return false;
 		}
 
-		return command.startsWith("No");
+		return command.startsWith("Not") || command.startsWith("E");
 	}
 
 	public int getFillLength(TextRenderer renderer) {
@@ -98,7 +98,9 @@ public class VimHandler implements Drawable, Widget, Element {
 	}
 
 	public void execute(AbstractSignEditScreen screen) {
-		String command = this.command.substring(1);
+		boolean force = this.command.endsWith("!");
+		int endIndex = force ? this.command.length() - 1 : this.command.length();
+		String command = this.command.substring(1, endIndex);
 		var action = switch (command) {
 			case "wq", "x" -> SimpleVimCommands.WQ;
 			case "w" -> SimpleVimCommands.WRITE;
@@ -110,7 +112,7 @@ public class VimHandler implements Drawable, Widget, Element {
 			}
 		};
 		if (action != null) {
-			action.perform(screen, false); // TODO
+			action.perform(screen, force);
 		}
 	}
 

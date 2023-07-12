@@ -7,6 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.ScreenRect;
+import net.minecraft.client.gui.screen.ingame.AbstractSignEditScreen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.math.MathHelper;
@@ -93,9 +94,9 @@ public class VimHandler implements Drawable, Widget, Element {
         this.mode = VimMode.REPLACE;
     }
 
-    public VimCommand execute() {
+    public void execute(AbstractSignEditScreen screen) {
         String command = this.command.substring(1);
-        return switch (command) {
+        var action =  switch (command) {
             case "wq", "x" -> SimpleVimCommands.WQ;
             case "w" -> SimpleVimCommands.WRITE;
             case "q" -> SimpleVimCommands.QUIT;
@@ -105,6 +106,9 @@ public class VimHandler implements Drawable, Widget, Element {
                 yield null;
             }
         };
+	if (action != null) {
+	    action.perform(screen, false); // TODO        
+	}
     }
 
     public void resetCommand() {

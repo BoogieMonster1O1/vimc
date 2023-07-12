@@ -135,10 +135,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen implements Sign
 		if (handler.mode == VimMode.EXECUTE) {
 			switch (keyCode) {
 				case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
-					var action = this.handler.execute();
-					if (action != null) {
-						action.perform((AbstractSignEditScreen) (Object) this);
-					}
+				        this.handler.execute((AbstractSignEditScreen) (Object) this);
 					cir.setReturnValue(true);
 					return;
 				}

@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 public enum SimpleVimCommands implements VimCommand {
     WQ {
         @Override
-        public void perform(AbstractSignEditScreen screen) {
-            WRITE.perform(screen);
-            QUIT.perform(screen);
+	public void perform(AbstractSignEditScreen screen, boolean force) {
+            WRITE.perform(screen, force);
+            QUIT.perform(screen, force);
         }
     },
     WRITE {
         @Override
-        public void perform(AbstractSignEditScreen screen) {
+        public void perform(AbstractSignEditScreen screen, boolean force) {
             screen.vimc$write();
             VimHandler handler = screen.vimc$getHandler();
             handler.saved = screen.vimc$getText();
@@ -28,7 +28,8 @@ public enum SimpleVimCommands implements VimCommand {
     },
     QUIT {
         @Override
-        public void perform(AbstractSignEditScreen screen) {
+	public void perform(AbstractSignEditScreen screen, boolean force) {
+	    // TODO
             screen.vimc$setText(screen.vimc$getHandler().saved);
             screen.vimc$quit();
         }
